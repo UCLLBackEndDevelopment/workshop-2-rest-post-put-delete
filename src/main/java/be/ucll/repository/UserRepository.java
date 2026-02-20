@@ -81,4 +81,8 @@ public class UserRepository {
                 .findFirst()
                 .orElse(null);
     }
+
+    public void delete(User user) {
+        users.removeIf(u -> u.getEmail().equals(user.getEmail()));
+    }
 }

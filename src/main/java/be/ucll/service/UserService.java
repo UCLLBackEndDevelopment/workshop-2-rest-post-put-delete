@@ -1,5 +1,6 @@
 package be.ucll.service;
 
+import be.ucll.model.Loan;
 import be.ucll.model.User;
 import be.ucll.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +13,12 @@ import java.util.List;
 public class UserService {
 
     private UserRepository userRepository;
+    private LoanService loanService;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, LoanService loanService) {
         this.userRepository = userRepository;
+        this.loanService = loanService;
     }
 
     public List<User> getAllUsers() {
@@ -70,5 +73,19 @@ public class UserService {
         user.setEmail(updatedUser.getEmail());
 
         return userRepository.save(user);
+    }
+
+    public void deleteUser(String email) {
+        if (!userRepository.userExists(email)) {
+            throw new RuntimeException("User does not exist.");
+        }
+        User user = userRepository.findByEmail(email);
+
+        List<Loan> activeLoans = loanService.getLoansByUser(email, true);
+        if (activeLoans != null && !activeLoans.isEmpty())
+            throw new RuntimeException("User has active loans.");
+
+        loanService.deleteLoansByUser(email);
+        userRepository.delete(user);
     }
 }

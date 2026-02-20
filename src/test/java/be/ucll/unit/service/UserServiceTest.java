@@ -1,7 +1,9 @@
 package be.ucll.unit.service;
 
 import be.ucll.model.User;
+import be.ucll.repository.LoanRepository;
 import be.ucll.repository.UserRepository;
+import be.ucll.service.LoanService;
 import be.ucll.service.UserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,19 +16,21 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserServiceTest {
 
     private UserService userService;
+    private LoanService loanService;
     private UserRepository userRepository;
 
     @BeforeEach
     public void setUp() {
         userRepository = new UserRepository();
-        userService = new UserService(userRepository);
+        loanService = new LoanService(new LoanRepository(), userRepository);
+        userService = new UserService(userRepository, loanService);
     }
 
     @Test
     public void givenUserRepositoryWithUsers_whenCallingAllUsers_allUsersFromRepositoryArePresent() {
         // given
         UserRepository repository = new UserRepository();
-        UserService service = new UserService(repository);
+        UserService service = new UserService(repository, loanService);
 
         // when
         List<User> result = service.getAllUsers();
@@ -254,6 +258,45 @@ public class UserServiceTest {
                 () -> userService.updateUser(email, updatedWithDifferentEmail));
 
         assertEquals("E-mail address cannot be changed.", ex.getMessage());
+    }
+
+    @Test
+    public void givenUserWithoutActiveLoans_whenDeleteUser_thenUserIsDeleted() {
+        // given
+        String existingEmail = "john.doe@ucll.be";
+
+        // when
+        userService.deleteUser(existingEmail);
+
+        // then
+        assertFalse(userRepository.userExists(existingEmail));
+        assertEquals(4, userRepository.getUsers().size());
+    }
+
+    @Test
+    public void givenNonExistingUser_whenDeleteUser_thenThrowException() {
+        // given
+        String nonExistingEmail = "nobody@ucll.be";
+
+        // when, then
+        Exception ex = Assertions.assertThrows(
+                RuntimeException.class,
+                () -> userService.deleteUser(nonExistingEmail));
+
+        assertEquals("User does not exist.", ex.getMessage());
+    }
+
+    @Test
+    public void givenUserWithActiveLoans_whenDeleteUser_thenThrowException() {
+        // given
+        String email = "jane.toe@ucll.be";
+
+        // when, then
+        Exception ex = Assertions.assertThrows(
+                RuntimeException.class,
+                () -> userService.deleteUser(email));
+
+        assertEquals("User has active loans.", ex.getMessage());
     }
 
 }
