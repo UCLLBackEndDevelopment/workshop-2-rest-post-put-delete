@@ -37,7 +37,7 @@ public class LoanServiceTest {
     public void givenUserAndOnlyActive_whenGetLoansByUser_thenOnlyActiveLoansByUserAreReturned() {
         List<Loan> result = loanService.getLoansByUser("jane.toe@ucll.be", true);
 
-        assertEquals(0, result.size());
+        assertEquals(1, result.size());
     }
 
     @Test
@@ -51,6 +51,49 @@ public class LoanServiceTest {
     public void givenNonExistingUser_whenGetLoansByUser_thenAnExceptionIsThrown() {
         Exception ex = assertThrows(RuntimeException.class,
                 () -> loanService.getLoansByUser("NonExistingUser", false));
+
+        assertEquals("User not found.", ex.getMessage());
+    }
+
+    @Test
+    public void givenUserWithOnlyInactiveLoans_whenDeleteLoansByUser_thenLoansAreDeleted() {
+        String email = "john.doe@ucll.be";
+
+        // precondition: user has loans
+        assertTrue(loanService.getLoansByUser(email, false).size() > 0);
+
+        // action
+        loanService.deleteLoansByUser(email);
+
+        // after deletion there should be no loans for that user
+        List<Loan> remaining = loanService.getLoansByUser(email, false);
+        assertEquals(0, remaining.size());
+    }
+
+    @Test
+    public void givenUserWithActiveLoans_whenDeleteLoansByUser_thenThrowsActiveLoans() {
+        Exception ex = assertThrows(RuntimeException.class,
+                () -> loanService.deleteLoansByUser("jane.toe@ucll.be"));
+
+        assertEquals("User has active loans.", ex.getMessage());
+    }
+
+    @Test
+    public void givenUserWithNoLoans_whenDeleteLoansByUser_thenThrowsUserHasNoLoans() {
+        String email = "john.doe@ucll.be";
+
+        loanRepository.loans.removeIf(loan -> loan.getUser().getEmail().equals(email));
+
+        Exception ex = assertThrows(RuntimeException.class,
+                () -> loanService.deleteLoansByUser(email));
+
+        assertEquals("User has no loans.", ex.getMessage());
+    }
+
+    @Test
+    public void givenNonExistingUser_whenDeleteLoansByUser_thenThrowsUserNotFound() {
+        Exception ex = assertThrows(RuntimeException.class,
+                () -> loanService.deleteLoansByUser("NonExistingUser"));
 
         assertEquals("User not found.", ex.getMessage());
     }

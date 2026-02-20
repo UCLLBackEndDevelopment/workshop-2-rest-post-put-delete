@@ -27,4 +27,17 @@ public class LoanService {
 
         return loanRepository.getLoansByUser(email, onlyActive);
     }
+
+    public void deleteLoansByUser(String email) {
+        List<Loan> allLoans = getLoansByUser(email, false);
+        if (allLoans.isEmpty()) {
+            throw new RuntimeException("User has no loans.");
+        }
+
+        List<Loan> loans = getLoansByUser(email, true);
+        if (!loans.isEmpty())
+            throw new RuntimeException("User has active loans.");
+
+        loanRepository.deleteLoansByUserEmail(email);
+    }
 }

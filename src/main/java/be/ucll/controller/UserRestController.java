@@ -53,4 +53,10 @@ public class UserRestController {
     public User updateUser(@PathVariable("email") String email, @RequestBody User user) {
         return userService.updateUser(email, user);
     }
+
+    @DeleteMapping("/{email}/loans")
+    public String deleteLoansByUser(@PathVariable("email") String email) {
+        loanService.deleteLoansByUser(email);
+        return "Loans of user successfully deleted.";
+    }
 }
