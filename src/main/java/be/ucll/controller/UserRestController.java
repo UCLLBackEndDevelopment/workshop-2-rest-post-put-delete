@@ -43,4 +43,9 @@ public class UserRestController {
 
         return loanService.getLoansByUser(email, onlyActive);
     }
+
+    @PostMapping
+    public User addUser(@RequestBody User user) {
+        return userService.addUser(user);
+    }
 }

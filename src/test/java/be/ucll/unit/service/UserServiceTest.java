@@ -183,4 +183,32 @@ public class UserServiceTest {
         // then
         assertEquals(5, users.size());
     }
+
+    @Test
+    public void givenNewUser_whenAddUser_thenUserIsAdded() {
+        // given
+        User newUser = new User("New User", 28, "new.user@ucll.be", "newpass123");
+
+        // when
+        User result = userService.addUser(newUser);
+
+        // then
+        assertEquals(newUser.getEmail(), result.getEmail());
+        assertEquals(newUser.getName(), result.getName());
+        assertTrue(userService.getAllUsers().contains(newUser));
+    }
+
+    @Test
+    public void givenExistingUserEmail_whenAddUser_thenExceptionIsThrown() {
+        // given
+        User existingUser = new User("John Doe", 25, "john.doe@ucll.be", "john1234");
+
+        // when, then
+        Exception ex = Assertions.assertThrows(
+                RuntimeException.class,
+                () -> userService.addUser(existingUser));
+
+        assertEquals("User already exists.", ex.getMessage());
+    }
+
 }

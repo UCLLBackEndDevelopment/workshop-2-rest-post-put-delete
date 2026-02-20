@@ -50,4 +50,11 @@ public class UserService {
 
         return userRepository.getUsersBetweenAge(min, max);
     }
+
+    public User addUser(User user) {
+        if (userRepository.userExists(user.getEmail())) {
+            throw new RuntimeException("User already exists.");
+        }
+        return userRepository.save(user);
+    }
 }

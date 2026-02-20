@@ -69,4 +69,9 @@ public class UserRepository {
     public boolean userExists(String email) {
         return !users.stream().filter(user -> user.getEmail().equals(email)).toList().isEmpty();
     }
+
+    public User save(User user) {
+        this.users.add(user);
+        return user;
+    }
 }
