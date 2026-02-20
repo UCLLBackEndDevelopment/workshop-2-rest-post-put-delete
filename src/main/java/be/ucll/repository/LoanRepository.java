@@ -21,8 +21,8 @@ public class LoanRepository {
                         LocalDate.now()),
                 new Loan(new UserRepository().getUsers().get(1),
                         List.of(new PublicationRepository().getBooks().get(1)),
-                        LocalDate.now(),
-                        null),
+                        LocalDate.now().minusDays(5),
+                        LocalDate.now().plusDays(4)),
                 new Loan(new UserRepository().getUsers().get(0),
                         List.of(new PublicationRepository().getBooks().get(1)),
                         LocalDate.now(),
@@ -32,7 +32,7 @@ public class LoanRepository {
     public List<Loan> getLoansByUser(String email, boolean onlyActive) {
         return loans.stream()
                 .filter(loan -> loan.getUser().getEmail().equals(email))
-                .filter(loan -> !onlyActive || loan.getStartDate().isBefore(LocalDate.now()) && LocalDate.now().isAfter(loan.getEndDate()))
+                .filter(loan -> !onlyActive || loan.getStartDate().isBefore(LocalDate.now()) && LocalDate.now().isBefore(loan.getEndDate()))
                 .toList();
     }
 }

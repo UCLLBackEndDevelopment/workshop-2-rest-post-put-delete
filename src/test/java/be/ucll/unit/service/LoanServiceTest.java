@@ -37,7 +37,7 @@ public class LoanServiceTest {
     public void givenUserAndOnlyActive_whenGetLoansByUser_thenOnlyActiveLoansByUserAreReturned() {
         List<Loan> result = loanService.getLoansByUser("jane.toe@ucll.be", true);
 
-        assertEquals(0, result.size());
+        assertEquals(1, result.size());
     }
 
     @Test
