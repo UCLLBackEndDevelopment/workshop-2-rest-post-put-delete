@@ -89,4 +89,15 @@ public class UserTest {
 
         Assertions.assertEquals("Password must be at least 8 characters long", ex.getMessage());
     }
+
+    @Test
+    public void givenExistingUser_whenChangingEmail_thenRuntimeExceptionIsThrown() {
+        User user = new User("John Doe", 30, "john.doe@ucll.be", "password123");
+
+        Exception ex = Assertions.assertThrows(RuntimeException.class,
+                () -> user.setEmail("new.email@ucll.be"));
+
+        Assertions.assertEquals("E-mail address cannot be changed.", ex.getMessage());
+    }
+
 }

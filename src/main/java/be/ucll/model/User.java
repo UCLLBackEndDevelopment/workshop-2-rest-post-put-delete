@@ -48,6 +48,8 @@ public class User {
         if (email == null || !email.contains(".") || !email.contains("@")) {
             throw new RuntimeException("E-mail must be a valid email format");
         }
+        if (this.email != null && !this.email.equals(email))
+            throw new RuntimeException("E-mail address cannot be changed.");
 
         this.email = email;
     }

@@ -74,4 +74,11 @@ public class UserRepository {
         this.users.add(user);
         return user;
     }
+
+    public User findByEmail(String email) {
+        return users.stream()
+                .filter(user -> user.getEmail().equals(email))
+                .findFirst()
+                .orElse(null);
+    }
 }

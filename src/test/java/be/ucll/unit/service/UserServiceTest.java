@@ -211,4 +211,49 @@ public class UserServiceTest {
         assertEquals("User already exists.", ex.getMessage());
     }
 
+    @Test
+    public void givenExistingUser_whenUpdateWithSameEmail_thenUserIsUpdated() {
+        // given
+        String email = "john.doe@ucll.be";
+        User updated = new User("John Updated", 26, email, "newpass123");
+
+        // when
+        User result = userService.updateUser(email, updated);
+
+        // then
+        assertEquals(updated.getName(), result.getName());
+        assertEquals(updated.getAge(), result.getAge());
+        assertEquals(updated.getPassword(), result.getPassword());
+        assertEquals(updated.getEmail(), result.getEmail());
+        assertTrue(userService.getAllUsers().contains(updated));
+    }
+
+    @Test
+    public void givenNonExistingUser_whenUpdate_thenThrowsUserDoesNotExist() {
+        // given
+        String missingEmail = "missing@ucll.be";
+        User updated = new User("Missing", 40, missingEmail, "password123");
+
+        // when, then
+        Exception ex = Assertions.assertThrows(
+                RuntimeException.class,
+                () -> userService.updateUser(missingEmail, updated));
+
+        assertEquals("User does not exist.", ex.getMessage());
+    }
+
+    @Test
+    public void givenExistingUser_whenChangingEmail_thenThrowsEmailCannotBeChanged() {
+        // given
+        String email = "john.doe@ucll.be";
+        User updatedWithDifferentEmail = new User("John Doe", 25, "new.email@ucll.be", "john1234");
+
+        // when, then
+        Exception ex = Assertions.assertThrows(
+                RuntimeException.class,
+                () -> userService.updateUser(email, updatedWithDifferentEmail));
+
+        assertEquals("E-mail address cannot be changed.", ex.getMessage());
+    }
+
 }

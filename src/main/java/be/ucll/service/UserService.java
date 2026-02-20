@@ -57,4 +57,18 @@ public class UserService {
         }
         return userRepository.save(user);
     }
+
+    public User updateUser(String email, User updatedUser) {
+        if (!userRepository.userExists(email)) {
+            throw new RuntimeException("User does not exist.");
+        }
+        User user = userRepository.findByEmail(email);
+
+        user.setAge(updatedUser.getAge());
+        user.setName(updatedUser.getName());
+        user.setPassword(updatedUser.getPassword());
+        user.setEmail(updatedUser.getEmail());
+
+        return userRepository.save(user);
+    }
 }
