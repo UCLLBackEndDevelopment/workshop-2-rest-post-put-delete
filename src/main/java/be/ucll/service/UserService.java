@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -62,10 +63,13 @@ public class UserService {
     }
 
     public User updateUser(String email, User updatedUser) {
-        if (!userRepository.userExists(email)) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+
+        if(userOptional.isEmpty()){
             throw new RuntimeException("User does not exist.");
         }
-        User user = userRepository.findByEmail(email);
+
+        User user  = userOptional.get();
 
         user.setAge(updatedUser.getAge());
         user.setName(updatedUser.getName());
@@ -76,10 +80,13 @@ public class UserService {
     }
 
     public void deleteUser(String email) {
-        if (!userRepository.userExists(email)) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+
+        if(userOptional.isEmpty()){
             throw new RuntimeException("User does not exist.");
         }
-        User user = userRepository.findByEmail(email);
+
+        User user  = userOptional.get();
 
         List<Loan> activeLoans = loanService.getLoansByUser(email, true);
         if (activeLoans != null && !activeLoans.isEmpty())

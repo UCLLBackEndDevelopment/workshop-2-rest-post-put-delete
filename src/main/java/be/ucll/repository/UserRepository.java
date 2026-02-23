@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class UserRepository {
@@ -75,11 +76,10 @@ public class UserRepository {
         return user;
     }
 
-    public User findByEmail(String email) {
+    public Optional<User> findByEmail(String email) {
         return users.stream()
                 .filter(user -> user.getEmail().equals(email))
-                .findFirst()
-                .orElse(null);
+                .findFirst();
     }
 
     public void delete(User user) {
