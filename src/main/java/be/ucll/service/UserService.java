@@ -4,7 +4,6 @@ import be.ucll.model.Loan;
 import be.ucll.model.User;
 import be.ucll.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -68,15 +67,18 @@ public class UserService {
         if(userOptional.isEmpty()){
             throw new RuntimeException("User does not exist.");
         }
-
-        User user  = userOptional.get();
+// 2 spaties
+        User user = userOptional.get();
 
         user.setAge(updatedUser.getAge());
         user.setName(updatedUser.getName());
         user.setPassword(updatedUser.getPassword());
         user.setEmail(updatedUser.getEmail());
-
-        return userRepository.save(user);
+ // savind the user, maakt ene nieuwe user aan:
+        // 1.  curl -s http://localhost:8080/users
+        // curl -s -X PUT http://localhost:8080/users/john.doe@ucll.be -H "Content-Type: application/json" -d '{"name":"John Updated","age":26,"email":"john.doe@ucll.be","password":"newpass123"}' deze word gedupliceerd
+        // 3.  curl -s http://localhost:8080/users
+        return user;
     }
 
     public void deleteUser(String email) {
@@ -85,14 +87,18 @@ public class UserService {
         if(userOptional.isEmpty()){
             throw new RuntimeException("User does not exist.");
         }
-
-        User user  = userOptional.get();
+ // 2 spaties
+        User user = userOptional.get();
 
         List<Loan> activeLoans = loanService.getLoansByUser(email, true);
         if (activeLoans != null && !activeLoans.isEmpty())
             throw new RuntimeException("User has active loans.");
 
-        loanService.deleteLoansByUser(email);
+// Als een persoon geen loans heeft, dan konhij niet veriwjderd worden: probeer maar eens curl -s -X DELETE http://localhost:8080/users/birgit.doe@ucll.be in de andere branch
+        List<Loan> allLoans = loanService.getLoansByUser(email, false);
+        if (!allLoans.isEmpty()) {
+            loanService.deleteLoansByUser(email);
+        }
         userRepository.delete(user);
     }
 }
