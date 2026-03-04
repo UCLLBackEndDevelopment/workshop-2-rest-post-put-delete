@@ -16,28 +16,22 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserServiceTest {
 
     private UserService userService;
-    private LoanService loanService;
     private UserRepository userRepository;
 
     @BeforeEach
     public void setUp() {
         userRepository = new UserRepository();
-        loanService = new LoanService(new LoanRepository(), userRepository);
-        userService = new UserService(userRepository, loanService);
+        userService = new UserService(userRepository, new LoanRepository());
     }
 
     @Test
     public void givenUserRepositoryWithUsers_whenCallingAllUsers_allUsersFromRepositoryArePresent() {
-        // given
-        UserRepository repository = new UserRepository();
-        UserService service = new UserService(repository, loanService);
-
         // when
-        List<User> result = service.getAllUsers();
+        List<User> result = userService.getAllUsers();
 
         // then
-        assertEquals(repository.getUsers().size(), result.size());
-        assertTrue(repository.getUsers().containsAll(result));
+        assertEquals(userRepository.getUsers().size(), result.size());
+        assertTrue(userRepository.getUsers().containsAll(result));
     }
 
     @Test
