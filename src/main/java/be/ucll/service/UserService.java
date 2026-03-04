@@ -2,6 +2,7 @@ package be.ucll.service;
 
 import be.ucll.model.Loan;
 import be.ucll.model.User;
+import be.ucll.repository.LoanRepository;
 import be.ucll.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -14,12 +15,12 @@ import java.util.Optional;
 public class UserService {
 
     private UserRepository userRepository;
-    private LoanService loanService;
+    private LoanRepository loanRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository, LoanService loanService) {
+    public UserService(UserRepository userRepository, LoanRepository loanRepository) {
         this.userRepository = userRepository;
-        this.loanService = loanService;
+        this.loanRepository = loanRepository;
     }
 
     public List<User> getAllUsers() {
@@ -65,7 +66,7 @@ public class UserService {
     public User updateUser(String email, User updatedUser) {
         Optional<User> userOptional = userRepository.findByEmail(email);
 
-        if(userOptional.isEmpty()){
+        if (userOptional.isEmpty()){
             throw new RuntimeException("User does not exist.");
         }
 
@@ -76,23 +77,23 @@ public class UserService {
         user.setPassword(updatedUser.getPassword());
         user.setEmail(updatedUser.getEmail());
 
-        return userRepository.save(user);
+        return user;
     }
 
     public void deleteUser(String email) {
         Optional<User> userOptional = userRepository.findByEmail(email);
 
-        if(userOptional.isEmpty()){
+        if (userOptional.isEmpty()){
             throw new RuntimeException("User does not exist.");
         }
 
         User user  = userOptional.get();
 
-        List<Loan> activeLoans = loanService.getLoansByUser(email, true);
+        List<Loan> activeLoans = loanRepository.getLoansByUser(email, true);
         if (activeLoans != null && !activeLoans.isEmpty())
             throw new RuntimeException("User has active loans.");
 
-        loanService.deleteLoansByUser(email);
+        loanRepository.deleteLoansByUserEmail(email);
         userRepository.delete(user);
     }
 }
