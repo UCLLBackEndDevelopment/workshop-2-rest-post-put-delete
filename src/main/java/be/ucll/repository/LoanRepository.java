@@ -32,7 +32,8 @@ public class LoanRepository {
     public List<Loan> getLoansByUser(String email, boolean onlyActive) {
         return loans.stream()
                 .filter(loan -> loan.getUser().getEmail().equals(email))
-                .filter(loan -> !onlyActive || loan.getStartDate().isBefore(LocalDate.now()) && LocalDate.now().isBefore(loan.getEndDate()))
+                .filter(loan -> !onlyActive || ((loan.getStartDate().isBefore(LocalDate.now()) || loan.getStartDate().equals(LocalDate.now()))
+                        && (LocalDate.now().isBefore(loan.getEndDate()) || LocalDate.now().equals(loan.getEndDate()))))
                 .toList();
     }
 
