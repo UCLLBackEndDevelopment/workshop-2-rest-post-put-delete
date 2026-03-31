@@ -34,7 +34,7 @@ public class LoanTest {
 
     @Test
     public void givenValidInput_whenLoanIsCreated_thenAllFieldsHaveCorrectValues() {
-        Loan loan = new Loan(validUser, validPublications, validStartDate, validEndDate);
+        Loan loan = new Loan(validUser, validPublications, validStartDate);
         Assertions.assertEquals(validUser, loan.getUser());
         Assertions.assertEquals(validPublications, loan.getPublications());
         Assertions.assertEquals(validStartDate, loan.getStartDate());
@@ -47,7 +47,7 @@ public class LoanTest {
     public void givenListWithBookWithNoCopies_whenLoanIsCreated_thenErrorIsThrownAndMagazineIsNotRented() {
         Exception ex = Assertions.assertThrows(
                 RuntimeException.class,
-                () -> new Loan(validUser, listWithBookWithNoCopies, validStartDate, validEndDate));
+                () -> new Loan(validUser, listWithBookWithNoCopies, validStartDate));
         Assertions.assertEquals("Unable to lend publication. No copies available for The Hobbit", ex.getMessage());
         Assertions.assertEquals(4, validMagazine.getAvailableCopies());
         Assertions.assertEquals(0, bookWithNoCopies.getAvailableCopies());
@@ -57,12 +57,12 @@ public class LoanTest {
     public void givenInvalidEndOrStartDate_whenLoanIsCreated_thenErrorIsThrown() {
         Exception ex = Assertions.assertThrows(
                 RuntimeException.class,
-                () -> new Loan(validUser, validPublications, null, validEndDate));
+                () -> new Loan(validUser, validPublications, null));
 
         Assertions.assertEquals("Start date is required", ex.getMessage());
 
         ex = Assertions.assertThrows(RuntimeException.class,
-                () -> new Loan(validUser, validPublications, LocalDate.now().plusDays(1), validEndDate));
+                () -> new Loan(validUser, validPublications, LocalDate.now().plusDays(1)));
 
         Assertions.assertEquals("Start date cannot be in the future", ex.getMessage());
     }
@@ -71,7 +71,7 @@ public class LoanTest {
     public void givenEmptyListOfPublication_whenLoanIsCreated_thenErrorIsThrown() {
         Exception ex = Assertions.assertThrows(
                 RuntimeException.class,
-                () -> new Loan(validUser, List.of(), validStartDate, validEndDate));
+                () -> new Loan(validUser, List.of(), validStartDate));
 
         Assertions.assertEquals("List is required", ex.getMessage());
     }
@@ -82,7 +82,7 @@ public class LoanTest {
         Assertions.assertEquals(4, validBook.getAvailableCopies());
         Assertions.assertEquals(4, validMagazine.getAvailableCopies());
         // when
-        Loan loan = new Loan(validUser, validPublications, validStartDate, validEndDate);
+        Loan loan = new Loan(validUser, validPublications, validStartDate);
         // then
         Assertions.assertEquals(3, validBook.getAvailableCopies());
         Assertions.assertEquals(3, validMagazine.getAvailableCopies());
@@ -91,7 +91,7 @@ public class LoanTest {
     @Test
     public void givenLoanWithPublication_whenPublicationsAreReturned_thenAvailableCopiesAreIncreased() {
         // given
-        Loan loan = new Loan(validUser, validPublications, validStartDate, validEndDate);
+        Loan loan = new Loan(validUser, validPublications, validStartDate);
         Assertions.assertEquals(3, validBook.getAvailableCopies());
         Assertions.assertEquals(3, validMagazine.getAvailableCopies());
         // when

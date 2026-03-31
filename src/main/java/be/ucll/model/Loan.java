@@ -12,7 +12,7 @@ public class Loan {
     private LocalDate startDate;
     private LocalDate endDate;
 
-    public Loan(User user, List<Publication> publications, LocalDate startDate, LocalDate endDate) {
+    public Loan(User user, List<Publication> publications, LocalDate startDate) {
         setUser(user);
         setStartDate(startDate);
         setEndDate(startDate.plusDays(21));
