@@ -14,19 +14,16 @@ public class LoanRepository {
 
     public LoanRepository() {
         loans = new ArrayList<>(List.of(new Loan(new UserRepository().getUsers().get(0),
-                        List.of(new PublicationRepository().getBooks().get(0)), LocalDate.now(), LocalDate.now()),
+                        List.of(new PublicationRepository().getBooks().get(0)), LocalDate.now().minusDays(22)),
                 new Loan(new UserRepository().getUsers().get(1),
                         List.of(new PublicationRepository().getBooks().get(0)),
-                        LocalDate.now(),
-                        LocalDate.now()),
+                        LocalDate.now().minusDays(22)),
                 new Loan(new UserRepository().getUsers().get(1),
                         List.of(new PublicationRepository().getBooks().get(1)),
-                        LocalDate.now().minusDays(5),
-                        LocalDate.now().plusDays(4)),
+                        LocalDate.now().minusDays(5)),
                 new Loan(new UserRepository().getUsers().get(0),
                         List.of(new PublicationRepository().getBooks().get(1)),
-                        LocalDate.now(),
-                        LocalDate.now())));
+                        LocalDate.now().minusDays(22))));
     }
 
     public List<Loan> getLoansByUser(String email, boolean onlyActive) {
