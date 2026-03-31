@@ -49,6 +49,10 @@ public class PublicationRepository {
     }
 
     public List<Publication> filterPublicationsByTitleAndType(String title, String type) {
+        if ((type == null || type.isBlank()) && (title == null || title.isBlank())) {
+            return getPublications();
+        }
+
         if (type == null || type.isBlank()) {
             return getPublications().stream()
                     .filter((p) -> p.getTitle().toLowerCase().contains(title.toLowerCase().strip()))
